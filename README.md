@@ -1,14 +1,14 @@
 # Automated Item Deletion Scripts
 
-Set of PowerShell scripts that a tenant administrator runs to delete all items across all workspaces in a tenant.
+Set of PowerShell scripts that a tenant administrator can run to delete all items across all workspaces in a tenant.
 
-> The final two steps permanently delete your items, and you can't restore them. Confirm that you backed up all item definitions and data before you continue.
+> **The final two steps permanently delete your items, and you can't restore them. Confirm that you backed up all item definitions and data before you continue.**
 
 ---
 
 ## Usage
 
-To clean up all items in your tenant, download `Step0.ps1` through `Step6.ps1` and follow these steps:
+To clean up all items in your tenant, download `Step0.ps1` through `Step6.ps1` and follow these steps in order:
 
 1. Sign in to the Global Admin account in Azure and open an Azure Cloud Shell session. Upload `Step0.ps1` through `Step6.ps1` to this session, and name them exactly as given.
 1. Dot source each script by running the following command:
@@ -41,8 +41,6 @@ To clean up all items in your tenant, download `Step0.ps1` through `Step6.ps1` a
 1. Run `Remove-AllActiveArtifacts -WorkspaceIdsFilePath workspaceIds.txt`. This step permanently deletes your items, and you can't restore them after executing the command. When prompted, type the confirmation word `YES`.
 1. Run `Remove-AllSoftDeletedArtifacts -WorkspaceIdsFilePath workspaceIds.txt`. When prompted, type the confirmation word `YES`.
 
-These scripts perform best-effort deletion of items across the tenant and have built-in error handling, including throttling retries.
-
 ---
 
 ## Output Files
@@ -52,15 +50,15 @@ These scripts perform best-effort deletion of items across the tenant and have b
 | `workspaceIds.txt` | Step0 | List of all workspace IDs found in the tenant |
 | `sharedWorkspaceIds.txt` | Step0 | List of all shared workspace IDs found |
 | `personalWorkspaceIds.txt` | Step0 | List of all personal workspace IDs found |
-| `workspace_$($wsId)_active_artifacts.json` | Step5 | List of active items (Power BI and Fabric) found |
-| `workspace_$($wsId)_softdeleted_artifacts.json` | Step6 | List of soft-deleted items (Power BI and Fabric) found |
+| `workspace_$($wsId)_active_artifacts.json` | Step5 | List of all active items (Power BI and Fabric) found |
+| `workspace_$($wsId)_softdeleted_artifacts.json` | Step6 | List of all soft-deleted items (Power BI and Fabric) found |
 
 ---
 
 ## Troubleshooting
 
-- **Restore-Workspaces reports workspace in Removing state**: No action is needed. The workspace is already being deleted by the system and can't be reliably restored
-- **Set-WorkspacesToCapacity errors on full capacity**: Find health capacity with available space or create a new capacity and assign all remaining workspaces to this capacity
-- **Add-AdminOnPersonalWorkspaces fails on non-429 error**: You may already be an admin on the workspace, or the workspace ID may be incorrect. Open the workspace directly in Fabric or Power BI to check
-- **Remaining items after Remove-AllActiveArtifacts**: If there are remaining items reported in the tenant remap readiness checks after executing the Step 5 script, make sure to run Step 6 script as well to clean up any soft-deleted items. These items are in the recycle bin of each workspace
-- **Remaining items after running all scripts**: These scripts perform best-effort deletion of items in the tenant. There still may be additional items, such as on Admin Monitoring workspaces, that need to be deleted before passing readiness checks
+- **`Restore-Workspaces` reports workspace in Removing state**: No action is needed. The workspace is already being deleted by the system and can't be reliably restored
+- **`Set-WorkspacesToCapacity` errors on full capacity**: Find a different, healthy capacity with available space or create a new capacity. Assign remaining workspaces to this capacity
+- **`Add-AdminOnPersonalWorkspaces` fails on non-429 error**: You may already be an admin in the workspace, or the workspace ID may be incorrect. Open the workspace directly in Fabric or Power BI to check. Also note that granting admin in a personal workspace is temporary (lasts for 24 hours), so you may need to run the script again
+- **Remaining items after `Remove-AllActiveArtifacts`**: If there are remaining items reported in readiness checks after executing `Remove-AllActiveArtifacts`, make sure to run `Remove-AllSoftDeletedArtifacts` to clean up any remaining soft-deleted items. These soft-deleted items are in the recycle bin of each workspace
+- **Remaining items after running all scripts**: These scripts perform best-effort deletion of items in the tenant. There may be remaining items, such as items in Admin Monitoring workspaces, that need to be deleted before passing readiness checks
