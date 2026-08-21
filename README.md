@@ -8,7 +8,7 @@ Set of PowerShell scripts that a tenant administrator runs to delete all items a
 
 ## Usage
 
-To clean up the Fabric items in your tenant, download `Step0.ps1` through `Step6.ps1` and follow these steps:
+To clean up all items in your tenant, download `Step0.ps1` through `Step6.ps1` and follow these steps:
 
 1. Sign in to the Global Admin account in Azure and open an Azure Cloud Shell session. Upload `Step0.ps1` through `Step6.ps1` to this session, and name them exactly as given.
 1. Dot source each script by running the following command:

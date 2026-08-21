@@ -28,8 +28,6 @@ function Remove-AllActiveArtifacts {
 
     if (-not $AdminUpn) { $AdminUpn = (Get-AzContext).Account.Id }
 
-    $adminOid = (Get-AzADUser -UserPrincipalName $AdminUpn).Id
-
     $secureFabricToken = (Get-AzAccessToken -ResourceUrl 'https://api.fabric.microsoft.com').Token
     $ssPtr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureFabricToken)
     $plaintextFabricToken = [System.Runtime.InteropServices.Marshal]::PtrToStringBSTR($ssPtr)
